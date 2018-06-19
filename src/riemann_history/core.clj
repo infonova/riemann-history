@@ -1,4 +1,6 @@
-(ns riemann-history.core
-  (:require [riemann.common :refer :all]
-            [riemann.config :refer :all]
-            [riemann.streams :refer :all]))
+(ns riemann-history.core)
+
+(defn history
+  "Just messing around..."
+  [event]
+  (str "Called plugin with event service: " (:service event)))
