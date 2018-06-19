@@ -1,0 +1,4 @@
+{:plugin "riemann-history"
+ :title  "A Riemann plugin."
+ :git-repo "https://gitblit.infonova.at/summary/~bhois!riemann-history.git"
+ :require riemann-history.core}
