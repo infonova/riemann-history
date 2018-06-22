@@ -10,6 +10,18 @@ A Riemann plugin called riemann-history
 lein uberjar
 ```
 
+### run dev environment (Alpha)
+
+``` 
+for now there is no hot-code replacement: 
+```
+
+1) lein uberjar
+1) docker-compose -f docker/compose.yml up
+1) connect your repl using either 
+    1) ```lein repl :connect 127.0.0.1:5558```
+    1) ![My image](doc/intellij-remote-repl-config.png "A title")
+
 ### Add to classpath
 
 ```

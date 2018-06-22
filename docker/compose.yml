@@ -1,0 +1,15 @@
+version: "3"
+services:
+  riemann:
+    container_name: "riemann"
+    image: riemannio/riemann:latest
+    environment:
+      - EXTRA_CLASSPATH=/plugins/riemann-history.jar
+    ports:
+      - "127.0.0.1:5555:5555"
+      - "127.0.0.1:5555:5555/udp"
+      - "127.0.0.1:5556:5556"
+      - "127.0.0.1:5558:5558"
+    volumes:
+      - ${PWD}/docker/riemann.config:/etc/riemann.config
+      - ${PWD}/target/riemann-history-0.1.0-SNAPSHOT.jar:/plugins/riemann-history.jar
