@@ -12,4 +12,4 @@ services:
       - "127.0.0.1:5558:5558"
     volumes:
       - ${PWD}/docker/riemann.config:/etc/riemann.config
-      - ${PWD}/target/riemann-history-0.1.0-SNAPSHOT.jar:/plugins/riemann-history.jar
+      - ${PWD}/target/riemann-history-0.1.0-SNAPSHOT-standalone.jar:/plugins/riemann-history.jar

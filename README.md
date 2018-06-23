@@ -48,9 +48,9 @@ export EXTRA_CLASSPATH=<path>/riemann/riemann-0.3.0/plugins/riemann-history-0.1.
 ; Expire old events from the index every 5 seconds.
 (periodically-expire 5)
 
-(history/history {:source :elasticsearch 
+(history/history {:connect "http://localhost:9200" 
                   :interval 600
-                  :file-path "/tmp/elasticsearch.edn"}
+                  :query "/tmp/elasticsearch.json"}
 
 (let [index (default :ttl 120 (index))]
   (streams

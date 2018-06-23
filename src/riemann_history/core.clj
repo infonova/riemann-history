@@ -1,25 +1,31 @@
 (ns riemann-history.core
-  (:require [riemann.time :refer [every!]]))
+  (:require [clojure.tools.logging :as log]
+            [qbits.spandex :as es]
+            [riemann.time :refer [every!]]))
 
 (def history-data 
-  (atom 0))
+  (atom {}))
 
 (defn query-job
-  "tbd"
-  []
+  "Query Elasticsearch and update the history-data map."
+  [client]
   (fn []
-    (swap! history-data inc)))
+    (let [response (es/request client {:url "_template"})
+          resp-body (:body response)]
+      (log/info resp-body)      
+      (reset! history-data resp-body))))
 
 (defn history
   "Takes one parameter:
 
   `config`: A map containing the following properties
   
-  `:source`     Source for historical data.
+  `:connect`    Elasticsearch `:connect` (default `http://localhost:9200`).
   `:interval`   Interval for querying the `:source` (default `86400` seconds).
-  `:file-path`  Path to the query file.
+  `:query`      Path to the query file.
 
   "
   [config]
-  (every! (:interval config 86400) 10 (query-job)))
+  (let [client (es/client {:hosts [(:connect config "http://localhost:9200")]})]
+    (every! (:interval config 86400) 10 (query-job client))))
 
