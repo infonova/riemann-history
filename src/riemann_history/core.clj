@@ -1,6 +1,8 @@
 (ns riemann-history.core
   (:require [clojure.tools.logging :as log]
             [cheshire.core :as json]
+            [clj-time.coerce :as clt-c]
+            [clj-time.format :as clt-f]
             [qbits.spandex :as es]
             [riemann.time :refer [every!]]))
 
@@ -9,8 +11,16 @@
 
 (defn get-history-data
   "Get history from `history-data` atom."
-  [history-name]
-  (get @history-data history-name))
+  [hk ek]
+  (get-in @history-data [hk ek]))
+
+(def key-formatter 
+  (clt-f/formatter "e:H"))
+
+(defn generate-key-from-epoch
+  "Get history-data key from event epoch."
+  [epoch]
+  (keyword (clt-f/unparse key-formatter (clt-c/from-long (long (* 1000 epoch))))))
 
 (defn transform
   "Transforms Elasticsearch buckets vector to map. E.g.
