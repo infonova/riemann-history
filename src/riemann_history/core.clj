@@ -5,7 +5,12 @@
             [riemann.time :refer [every!]]))
 
 (def history-data 
-  (atom {}))
+  (atom {:default {}}))
+
+(defn get-history-data
+  "Get history from `history-data` atom."
+  [history-name]
+  (get @history-data history-name))
 
 (defn transform
   "Transforms Elasticsearch buckets vector to map. E.g.
@@ -32,13 +37,14 @@
                                        :method :get
                                        :body query})
           buckets (get-in response [:body :aggregations :total_requests_per_day_hour :buckets])]
-      (reset! history-data (transform buckets)))))
+      (swap! history-data assoc (:name config :default) (transform buckets)))))
 
 (defn history
   "Takes one parameter:
 
   `config`: A map containing the following properties
   
+  `:name`       History name (default `:default`).
   `:connect`    Elasticsearch `:connect` (default `http://localhost:9200`).
   `:url`        Elasticsearch context (default `_search`)
   `:interval`   Interval for querying the `:source` (default `86400` seconds).

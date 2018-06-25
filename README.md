@@ -48,14 +48,16 @@ export EXTRA_CLASSPATH=<path>/riemann/riemann-0.3.0/plugins/riemann-history-0.1.
 ; Expire old events from the index every 5 seconds.
 (periodically-expire 5)
 
-(history/history {:connect "http://localhost:9200" 
-                  :url "_search"
-                  :interval 600
-                  :query "/tmp/elasticsearch.json"}
+(def request-history
+  (history/history {:name :requests-per-day-hour
+                    :connect "http://localhost:9200" 
+                    :url "_search"
+                    :interval 600
+                    :query "/tmp/elasticsearch.json"}))
 
 (let [index (default :ttl 120 (index))]
   (streams
-    (fn [e] (info @history/history-data))))
+    (fn [e] (info (history/get-history-data :requests-per-day-hour)))))
 ```
 
 ### Start riemann
