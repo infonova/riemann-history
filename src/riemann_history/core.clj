@@ -7,6 +7,17 @@
 (def history-data 
   (atom {}))
 
+(defn transform
+  "Transforms Elasticsearch buckets vector to map. E.g.
+
+  `[{:key \"1:0\" :doc_count 10}{:key \"2:0\" :doc_count 100}]`
+
+  becomes
+
+  `{:1:0 10 :2:0 100}`"
+  [buckets]
+  (into {} (map #(assoc (dissoc % :key :doc_count) (keyword (:key %)) (:doc_count %)) buckets)))
+
 (defn get-query
   "Get the Elasticsearch query from file."
   [query-file]
@@ -21,7 +32,7 @@
                                        :method :get
                                        :body query})
           buckets (get-in response [:body :aggregations :total_requests_per_day_hour :buckets])]
-      (reset! history-data buckets))))
+      (reset! history-data (transform buckets)))))
 
 (defn history
   "Takes one parameter:
