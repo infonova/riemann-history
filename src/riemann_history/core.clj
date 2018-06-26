@@ -5,7 +5,7 @@
             [clj-time.format :as clt-f]
             [qbits.spandex :as es]
             [riemann.time :refer [every!]]))
-
+; defonce?
 (def history-data 
   (atom {:default {}}))
 
@@ -46,6 +46,7 @@
           response (es/request client {:url (:url config "_search")
                                        :method :get
                                        :body query})
+          ; Flat?
           buckets (get-in response [:body :aggregations :total_requests_per_day_hour :buckets])]
       (swap! history-data assoc (:name config :default) (transform buckets)))))
 
