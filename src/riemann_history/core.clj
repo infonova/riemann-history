@@ -8,7 +8,7 @@
             [qbits.spandex :as es]
             [riemann.time :refer [every!]]))
 
-(defonce history-data 
+(defonce history-data
   (atom {:default {}}))
 
 (defn get-history-data
@@ -16,17 +16,15 @@
   [hk ek]
   (get-in @history-data [hk ek]))
 
-(defn get-key-formatter 
-  [tz]
-  (clt-format/with-zone 
-    (clt-format/formatter "e:H") 
-    (clt-core/time-zone-for-id tz)))
+(defn get-key-formatter [tz]
+  (clt-format/with-zone
+    (clt-format/formatter "e:H")(clt-core/time-zone-for-id tz)))
 
 (defn generate-key
   "Get history-data key from event epoch."
   ([epoch] (generate-key epoch "UTC"))
   ([epoch tz]
-   (keyword (clt-format/unparse 
+   (keyword (clt-format/unparse
               (get-key-formatter tz)
               (clt-coerce/from-long (long (* 1000 epoch)))))))
 
@@ -73,4 +71,3 @@
   [config]
   (let [client (es/client {:hosts [(:connect config "http://localhost:9200")]})]
     (every! (:interval config 86400) 10 (query client config))))
-
