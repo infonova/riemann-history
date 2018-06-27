@@ -1,5 +1,6 @@
 (ns riemann-history.core
   (:require [clojure.tools.logging :as log]
+            [clojure.walk :as walk]
             [cheshire.core :as json]
             [clj-time.coerce :as clt-c]
             [clj-time.format :as clt-f]
@@ -31,7 +32,7 @@
 
   `{:1:0 10 :2:0 100}`"
   [buckets]
-  (into {} (map #(assoc (dissoc % :key :doc_count) (keyword (:key %)) (:doc_count %)) buckets)))
+  (walk/keywordize-keys (into {} (map (juxt :key :doc_count) buckets))))
 
 (defn get-query
   "Get the Elasticsearch query from file."
