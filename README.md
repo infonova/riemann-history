@@ -61,7 +61,7 @@ export EXTRA_CLASSPATH=<path>/riemann/riemann-0.3.0/plugins/riemann-history-0.1.
         (info 
           (history/get-history-data
             :requests-per-day-hour
-            (history/generate-key-from-epoch (:time e)))))))
+            (history/generate-key (:time e)))))))
 ```
 
 ### Start riemann

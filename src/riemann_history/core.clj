@@ -2,12 +2,13 @@
   (:require [clojure.tools.logging :as log]
             [clojure.walk :as walk]
             [cheshire.core :as json]
-            [clj-time.coerce :as clt-c]
-            [clj-time.format :as clt-f]
+            [clj-time.core :as clt-core]
+            [clj-time.coerce :as clt-coerce]
+            [clj-time.format :as clt-format]
             [qbits.spandex :as es]
             [riemann.time :refer [every!]]))
-; defonce?
-(def history-data 
+
+(defonce history-data 
   (atom {:default {}}))
 
 (defn get-history-data
@@ -15,13 +16,19 @@
   [hk ek]
   (get-in @history-data [hk ek]))
 
-(def key-formatter 
-  (clt-f/formatter "e:H"))
+(defn get-key-formatter 
+  [tz]
+  (clt-format/with-zone 
+    (clt-format/formatter "e:H") 
+    (clt-core/time-zone-for-id tz)))
 
-(defn generate-key-from-epoch
+(defn generate-key
   "Get history-data key from event epoch."
-  [epoch]
-  (keyword (clt-f/unparse key-formatter (clt-c/from-long (long (* 1000 epoch))))))
+  ([epoch] (generate-key epoch "UTC"))
+  ([epoch tz]
+   (keyword (clt-format/unparse 
+              (get-key-formatter tz)
+              (clt-coerce/from-long (long (* 1000 epoch)))))))
 
 (defn transform
   "Transforms Elasticsearch buckets vector to map. E.g.
