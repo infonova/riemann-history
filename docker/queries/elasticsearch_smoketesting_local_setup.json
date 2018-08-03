@@ -1,0 +1,13 @@
+{
+  "aggs": {
+    "age": {
+      "terms": {
+        "field" : "age",
+        "script" : {
+          "source" : "doc['age'].value",
+          "lang" : "painless"
+        }
+      }
+    }
+  }
+}

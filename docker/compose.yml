@@ -11,5 +11,33 @@ services:
       - "127.0.0.1:5556:5556"
       - "127.0.0.1:5558:5558"
     volumes:
-      - ${PWD}/docker/riemann.config:/etc/riemann.config
+      - ${PWD}/docker/local-dev-riemann.config:/etc/riemann.config
       - ${PWD}/target/riemann-history-0.1.0-SNAPSHOT-standalone.jar:/plugins/riemann-history.jar
+      - ${PWD}/docker/queries:/etc/riemann-history
+    networks:
+      - riemann-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    container_name: elasticsearch
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - riemann-net
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  riemann-net:

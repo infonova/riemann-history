@@ -10,17 +10,14 @@ A Riemann plugin called riemann-history
 lein uberjar
 ```
 
-### run dev environment (Alpha)
-
-``` 
-for now there is no hot-code replacement: 
-```
+### run dev environment
 
 1) lein uberjar
 1) docker-compose -f docker/compose.yml up
 1) connect your repl using either 
     1) ```lein repl :connect 127.0.0.1:5558```
     1) ![My image](doc/intellij-remote-repl-config.png "A title")
+1) (re)load riemann-history.core etc through REPL
 
 ### Add to classpath
 
@@ -53,7 +50,7 @@ export EXTRA_CLASSPATH=<path>/riemann/riemann-0.3.0/plugins/riemann-history-0.1.
                     :connect "http://localhost:9200" 
                     :url "_search"
                     :interval 600
-                    :query "/tmp/elasticsearch.json"}))
+                    :query "/etc/riemann-history/elasticsearch.json"}))
 
 (let [index (default :ttl 120 (index))]
   (streams
