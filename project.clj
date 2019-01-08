@@ -1,4 +1,4 @@
-(defproject riemann-history "0.1.0-SNAPSHOT"
+(defproject riemann-history "0.1.0"
 
   :description "riemann-history"
   :url "http://github.com/infonova/riemann-history"
