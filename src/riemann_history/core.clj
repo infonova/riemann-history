@@ -12,7 +12,7 @@
   (atom {:default {}}))
 
 (defn get-history-data
-  "Get history from `history-data` atom."
+  "Get history from `history-data` atom for given history and event key."
   [hk ek]
   (get-in @history-data [hk ek]))
 
@@ -52,20 +52,21 @@
           response (es/request client {:url (:url config "_search")
                                        :method :get
                                        :body query})
-          ; Flat?
-          buckets (get-in response [:body :aggregations :total_requests_per_day_hour :buckets])]
-      (swap! history-data assoc (:name config :default) (transform buckets)))))
+          buckets (get-in response [:body :aggregations (:aggregation config :riemann-history) :buckets])]
+      (swap! history-data assoc (:name config :default) ((:transform-fn config transform) buckets)))))
 
 (defn history
   "Takes one parameter:
 
   `config`: A map containing the following properties
-  
-  `:name`       History name (default `:default`).
-  `:connect`    Elasticsearch `:connect` (default `http://localhost:9200`).
-  `:url`        Elasticsearch context (default `_search`)
-  `:interval`   Interval for querying the `:source` (default `86400` seconds).
-  `:query`      Path to the query file.
+
+  `:name`           History name (default `:default`).
+  `:connect`        Elasticsearch `:connect` (default `http://localhost:9200`).
+  `:url`            Elasticsearch context (default `_search`)
+  `:interval`       Interval for querying the `:source` (default `86400` seconds).
+  `:query`          Path to the query file.
+  `:aggregation`    Name of the Elasticsearch aggregation (default `riemann-history`).
+  `:transform-fn`   Optional transform function for the ES query resultset (default `default-transform`).
 
   "
   [config]
