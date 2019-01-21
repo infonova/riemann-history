@@ -8,7 +8,7 @@ Since Riemann does not have any persistence layer it is not straightforward to i
 
 ![Exception Count](doc/rh-exceptioncount.png)
 
-The Grafana graph shows exceptions over time. The green line is the actual value and the blue line shows the expected value generated from historical data.
+The Grafana graph shows exceptions over time. The green line is the actual value and the blue line shows the expected value generated from historical data. The red square highlights an anomaly which could be alerted upon.
 
 ## Usage
 

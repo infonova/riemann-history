@@ -1,1 +1,0 @@
-(ns riemann-history.elasticsearch)
