@@ -49,9 +49,11 @@
   [client config]
   (fn []
     (let [query (get-query (:query config))
-          response (es/request client {:url (:url config "_search")
-                                       :method :get
-                                       :body query})
+          response (es/request client (merge
+                                        (dissoc (:es-options config) :hosts)
+                                        {:url (get-in config [:es-options :url] "_search")
+                                         :method :get
+                                         :body query}))
           buckets (get-in response [:body :aggregations (:aggregation config :riemann-history) :buckets])]
       (swap! history-data assoc (:name config :default) ((:transform-fn config transform) buckets)))))
 
@@ -61,14 +63,15 @@
   `config`: A map containing the following properties
 
   `:name`           History name (default `:default`).
-  `:connect`        Elasticsearch `:connect` (default `http://localhost:9200`).
-  `:url`            Elasticsearch context (default `_search`)
-  `:interval`       Interval for querying the `:source` (default `86400` seconds).
+  `:es-options      Elasticsearch client options with the following defaults:
+    `:hosts`        Elasticsearch hosts (default `http://localhost:9200`).
+    `:url`          Elasticsearch url (default `_search`)
+  `:interval`       Interval for querying Elasticsearch (default `86400` seconds).
   `:query`          Path to the query file.
   `:aggregation`    Name of the Elasticsearch aggregation (default `riemann-history`).
   `:transform-fn`   Optional transform function for the ES query resultset (default `default-transform`).
 
   "
   [config]
-  (let [client (es/client {:hosts [(:connect config "http://localhost:9200")]})]
+  (let [client (es/client {:hosts [(get-in config [:es-options :hosts] "http://localhost:9200")]})]
     (every! (:interval config 86400) 10 (query client config))))
